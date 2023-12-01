@@ -17,17 +17,27 @@ export function registerControls() {
 }
 
 export function setMinutes() {
-  el.minutes.addEventListener("focus", () => {
+  el.minutes.addEventListener("focus", (event) => {
     el.minutes.textContent = "";
   });
 
-  //somente numeros
-  el.minutes.onkeydown = (event) =>
-    /\d|Backspace|ArrowLeft|ArrowRight/.test(event.key);
+  el.minutes.onkeydown = (event) => {
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight'];
+    const isNumber = /\d/.test(event.key);
+    
+    if (!isNumber && !allowedKeys.includes(event.key)) {
+      event.preventDefault();
+    }
+  
+    if (el.minutes.textContent.length > 1 && isNumber) {
+      event.preventDefault();
+    }
+  }
 
   el.minutes.addEventListener("blur", (event) => {
     let time = event.currentTarget.textContent;
-    time = time > 60 ? 60 : time;
+    console.log(event)
+    time = time > 24 ? 24 : time;
     state.minutes = time;
     state.seconds = 0;
     timer.updateDisplay();
